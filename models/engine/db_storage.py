@@ -95,6 +95,7 @@ class DBStorage:
         """call remove method on the private session attribute
         """
         self.__session.close()
+        self.__session.remove()
 
     def drop(self, cls=None):
         """drop all tables
