@@ -106,3 +106,22 @@ class DBStorage:
         """rollback all changes
         """
         self.__session.rollback()
+
+    def get(self, cls, id):
+        """Returns the object based on the class and ID
+        """
+        class_objects = self.all(cls)
+        ID = f"{cls.__name__}.{id}"
+        if class_objects[ID]:
+            return class_objects[ID]
+        else:
+            return None
+
+    def count(self, cls=None):
+        """Returns the number of objects in a class.
+          If no class is passed, returns the count of all objects.
+        """
+        if cls is None:
+            return len(self.all().values())
+        else:
+            return len(self.all(cls).values())
