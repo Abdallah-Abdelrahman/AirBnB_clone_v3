@@ -20,6 +20,8 @@ from models.review import Review
 from models.amenity import Amenity
 import MySQLdb
 
+TEST = os.getenv('HBNB_TEST') == 'test'
+
 
 class TestBaseModelDocPep8(unittest.TestCase):
     """unittest class for FileStorage class
@@ -110,6 +112,7 @@ class TestDBStorage(unittest.TestCase):
         for m in methods:
             self.assertIn(m, funcs)
 
+    @unittest.skipIf(not TEST, 'not test env')
     def test_all(self):
         """Test the all method"""
         all_objs = self.storage.all()
@@ -161,6 +164,7 @@ class TestDBStorage(unittest.TestCase):
                          self.storage.all(State).values())
         del self.instances['del_state']
 
+    @unittest.skipIf(not TEST, 'not test env')
     def test_reload(self):
         """Test the reload method"""
         from sqlalchemy.orm.session import Session
