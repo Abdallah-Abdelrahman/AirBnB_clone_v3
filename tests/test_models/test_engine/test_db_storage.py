@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 """
 Unittest for the DBStorage Class
+Attrs:
+    TEST(bool): constant that tells if the enviroment is test or not
 """
 
 import unittest

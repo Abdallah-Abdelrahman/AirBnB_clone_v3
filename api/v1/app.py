@@ -1,5 +1,9 @@
 #!/usr/bin/python3
-'''Flask api'''
+'''Flask api
+
+Attrs:
+    app: application that run flask wsgi
+'''
 from flask import Flask
 from api.v1.views import app_views
 from os import getenv
