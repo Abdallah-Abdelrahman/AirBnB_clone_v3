@@ -45,7 +45,7 @@ def add_state():
         state = State(**state)
         state.save()
 
-        return state.to_dict(), 201
+        return jsonify(state.to_dict()), 201
     except Exception:
         return jsonify('Not a JSON'), 400
 
@@ -64,6 +64,6 @@ def update_state_by_id(state_id):
             if k not in ('id', 'created_at', 'updated_at'):
                 setattr(state, k, v)
         state.save()
-        return state.to_dict(), 200
+        return jsonify(state.to_dict()), 200
     except Exception:
         return jsonify('Not a JSON'), 400
