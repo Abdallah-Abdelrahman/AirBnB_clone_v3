@@ -5,13 +5,13 @@ from flask import jsonify
 from models import storage
 
 
-@app_views.route('/status')
+@app_views.route('/status', strict_slashes=False)
 def status():
     '''Status route
 
     Returns: json of status ok
 '''
-    return jsonify({'status': 'OK'})
+    return jsonify({'status': 'OK'}), 200
 
 
 @app_views.route('/stats')
