@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-'''Index entry '''
+'''Index entry for the blueprint'''
 from api.v1.views import app_views
 from flask import jsonify
 from models import storage
@@ -7,7 +7,10 @@ from models import storage
 
 @app_views.route('/status')
 def status():
-    '''Status route'''
+    '''Status route
+
+    Returns: json of status ok
+'''
     return jsonify({'status': 'OK'})
 
 
