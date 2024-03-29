@@ -1,5 +1,6 @@
 main
 main.py
+test_get_count.py
 **/__pycache__
 *.json
 test_save_reload_base_model.py
