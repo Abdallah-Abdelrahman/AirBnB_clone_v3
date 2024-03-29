@@ -17,7 +17,7 @@ def get_state_by_id(state_id):
     '''Route to retreive state by id'''
     state = storage.get(State, state_id)
     if not state:
-        return jsonify({'error': 'Not found'}), 404
+        abort(404)
     return state.to_dict()
 
 
@@ -27,7 +27,7 @@ def del_state_by_id(state_id):
     '''Route to delete state by id'''
     state = storage.get(State, state_id)
     if not state:
-        return jsonify({'error': 'Not found'}), 404
+        abort(404)
     state.delete()
     storage.save()
     return jsonify({}), 200
@@ -38,13 +38,16 @@ def add_state():
     '''Route to add new state'''
     if not request.is_json:
         return jsonify('Not a JSON'), 400
-    state = request.get_json()
-    if 'name' not in state:
-        return jsonify('Missing name'), 400
-    state = State(**state)
-    state.save()
+    try:
+        state = request.get_json()
+        if 'name' not in state:
+            return jsonify('Missing name'), 400
+        state = State(**state)
+        state.save()
 
-    return state.to_dict(), 201
+        return state.to_dict(), 201
+    except Exception:
+        return jsonify('Not a JSON'), 400
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False, methods=['PUT'])
@@ -56,7 +59,7 @@ def update_state_by_id(state_id):
         data = request.get_json()
         state = storage.get(State, state_id)
         if not state:
-            return jsonify({'error': 'Not found'}), 404
+            abort(404)
         for k, v in data.items():
             if k not in ('id', 'created_at', 'updated_at'):
                 setattr(state, k, v)
