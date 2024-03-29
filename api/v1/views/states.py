@@ -6,13 +6,13 @@ from models import storage
 from models.state import State
 
 
-@app_views.route('/states', strict_slashes=False)
+@app_views.route('/states', strict_slashes=False, methods=['GET'])
 def get_states():
     '''Route to retreive all states'''
-    return jsonify([s.to_dict() for s in storage.all(State).values()])
+    return jsonify([s.to_dict() for s in storage.all(State).values()]), 200
 
 
-@app_views.route('/states/<string:state_id>', strict_slashes=False)
+@app_views.route('/states/<state_id>', strict_slashes=False, methods=['GET'])
 def get_state_by_id(state_id):
     '''Route to retreive state by id'''
     state = storage.get(State, state_id)
@@ -39,10 +39,10 @@ def add_state():
     if not request.is_json:
         return jsonify('Not a JSON'), 400
     try:
-        state = request.get_json()
-        if 'name' not in state:
+        data = request.get_json()
+        if 'name' not in data:
             return jsonify('Missing name'), 400
-        state = State(**state)
+        state = State(**data)
         state.save()
 
         return jsonify(state.to_dict()), 201
