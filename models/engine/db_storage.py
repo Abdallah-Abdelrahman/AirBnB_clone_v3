@@ -110,10 +110,12 @@ class DBStorage:
     def get(self, cls, id):
         """Returns the object based on the class and ID
         """
+        if cls not in classes:
+            return None
         class_objects = self.all(cls)
-        ID = f"{cls.__name__}.{id}"
-        if class_objects[ID]:
-            return class_objects[ID]
+        id_ = f"{cls.__name__}.{id}"
+        if id_ in class_objects:
+            return class_objects[id_]
         else:
             return None
 
@@ -122,6 +124,6 @@ class DBStorage:
           If no class is passed, returns the count of all objects.
         """
         if cls is None:
-            return len(self.all().values())
+            return len(self.all())
         else:
-            return len(self.all(cls).values())
+            return len(self.all(cls))

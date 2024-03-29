@@ -76,9 +76,13 @@ class FileStorage:
     def get(self, cls, id):
         """Returns the object based on the class and ID
         """
-        class_objects = self.all(cls)
-        if class_objects[id]:
-            return class_objects[id]
+        classes = ('User', 'State', 'City', 'Place', 'Review', 'Amenity')
+        if cls.__name__ not in classes:
+            return None
+        objects = self.all(cls)
+        id_ = f'{cls.__name__}.{id}'
+        if id_ in objects:
+            return objects[id_]
         else:
             return None
 
