@@ -1,13 +1,16 @@
 #!/usr/bin/python3
-'''Index entry for the blueprint'''
+'''Index entry for the blueprint.
+The module has 2 endpoints handler one for the /status
+and the other /stats for counting all the instances as json
+'''
 from api.v1.views import app_views
 from flask import jsonify
 from models import storage
 
 
-@app_views.route('/status', strict_slashes=False)
+@app_views.route('/status', strict_slashes=False, methods=['GET'])
 def status():
-    '''Status route
+    '''Status route.
 
     Returns:
         json of status ok
@@ -17,7 +20,10 @@ def status():
 
 @app_views.route('/stats')
 def stats():
-    '''Route to retrieves the number of each objects by type'''
+    '''Route to retrieves the number of each objects by type.
+
+    Returns:
+        json of all instances count'''
     from models.state import State
     from models.city import City
     from models.place import Place

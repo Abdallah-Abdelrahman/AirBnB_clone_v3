@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-'''Flask api
+'''The module runs flask application running on port 5000
+and host 0.0.0.0 if it didn't find the corresponding env variables.
 
 Attrs:
     app: application that run flask wsgi
@@ -17,16 +18,21 @@ app.register_blueprint(app_views)
 
 @app.teardown_appcontext
 def teardown_db(exception):
-    '''remove the current SQLAlchemy Session after each request
+    '''remove the current SQLAlchemy Session after each request.
+
     Args:
-        exception:
+        exception: Exception
     '''
     storage.close()
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    '''handles 404 errors'''
+    '''handles 404 errors when resource not found
+
+    Args:
+        e: error
+    '''
     return jsonify({"error": "Not found"}), 404
 
 
