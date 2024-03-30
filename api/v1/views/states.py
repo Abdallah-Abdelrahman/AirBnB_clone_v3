@@ -39,6 +39,8 @@ def add_state():
     '''Route to add new state'''
     if not request.is_json:
         abort(400, 'Not a JSON')
+    if request.content_type != 'application/json':
+        abort(400, 'Not a JSON')
     try:
         data = request.get_json()
         if data is None:
@@ -53,10 +55,13 @@ def add_state():
         abort(400, 'Not a JSON')
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False, methods=['PUT'])
+@app_views.route('/states/<string:state_id>',
+                 strict_slashes=False, methods=['PUT'])
 def update_state_by_id(state_id):
     '''Route to udpate state based on id'''
     if not request.is_json:
+        abort(400, 'Not a JSON')
+    if request.content_type != 'application/json':
         abort(400, 'Not a JSON')
     try:
         data = request.get_json()
