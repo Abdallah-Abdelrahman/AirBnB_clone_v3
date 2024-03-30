@@ -237,6 +237,21 @@ class Test_creating_objs(unittest.TestCase):
         with self.assertRaises(TypeError):
             models.storage.reload("args")
 
+    def test_get_filestorage(self):
+        '''test the storage get method'''
+        data = {"email": "user@mail.com", "password": "123"}
+        instance = User(**data)
+        models.storage.new(instance)
+        models.storage.save()
+        get_instance = models.storage.get(User, instance.id)
+        self.assertAlmostEqual(instance, get_instance)
+
+    def test_count_filestorage(self):
+        '''test the count storage method'''
+        count = models.storage.count()
+        all_count = len(models.storage.all())
+        self.assertAlmostEqual(all_count, count)
+
 
 if __name__ == '__main__':
     unittest.main()
