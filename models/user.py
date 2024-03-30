@@ -1,29 +1,28 @@
 #!/usr/bin/python3
-""" holds class User"""
-import models
-from models.base_model import BaseModel, Base
-from os import getenv
-import sqlalchemy
-from sqlalchemy import Column, String
+'''Module defines `User` class'''
+
+from models.base_model import BaseModel, Base, store
 from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String
 
 
+@store('reviews', 'places',
+       email=(Column(String(128), nullable=False), ''),
+       password=(Column(String(128), nullable=False), ''),
+       first_name=(Column(String(128)), ''),
+       last_name=(Column(String(128)), ''),
+       reviews=(relationship('Review', backref='user',
+                             cascade='all, delete-orphan'), ),
+       places=(relationship('Place', backref='user',
+                            cascade='all, delete-orphan'), )
+       )
 class User(BaseModel, Base):
-    """Representation of a user """
-    if models.storage_t == 'db':
-        __tablename__ = 'users'
-        email = Column(String(128), nullable=False)
-        password = Column(String(128), nullable=False)
-        first_name = Column(String(128), nullable=True)
-        last_name = Column(String(128), nullable=True)
-        places = relationship("Place", backref="user")
-        reviews = relationship("Review", backref="user")
-    else:
-        email = ""
-        password = ""
-        first_name = ""
-        last_name = ""
+    '''User class.
 
-    def __init__(self, *args, **kwargs):
-        """initializes user"""
-        super().__init__(*args, **kwargs)
+    Atrrs:
+        email(str):
+        password(str):
+        first_name(str):
+        last_name(str):
+    '''
+    __tablename__ = 'users'

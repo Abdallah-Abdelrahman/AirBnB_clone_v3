@@ -14,3 +14,4 @@ install*
 versions
 **/7-dump.sql
 _models
+requirements.txt
