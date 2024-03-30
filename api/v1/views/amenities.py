@@ -11,7 +11,8 @@ def get_amenities():
     '''gets all amenities'''
 
     amenities = storage.all(Amenity)
-    return (jsonify([a.to_dict() for a in amenities.values()]), 200)
+    resp = [a.to_dict() for a in amenities.values()]
+    return (jsonify(resp), 200)
 
 
 @app_views.route('amenities/<amenity_id>', strict_slashes=False)
@@ -41,6 +42,11 @@ def delete_amenity(amenity_id):
                  strict_slashes=False, methods=['POST'])
 def create_amenity():
     '''a post request to create a new amenity'''
+    if request.content_type != 'application/json':
+        abort(400, 'Not a JSON')
+    if not request.is_json:
+        abort(400, 'Not a JSON')
+
     try:
         data = request.get_json(force=True)
         if 'name' not in data:
@@ -57,6 +63,11 @@ def create_amenity():
                  strict_slashes=False, methods=['PUT'])
 def update_amenity(amenity_id):
     '''a put request to update a amenity object'''
+    if request.content_type != 'application/json':
+        abort(400, 'Not a JSON')
+    if not request.is_json:
+        abort(400, 'Not a JSON')
+
     amenity = storage.get(Amenity, amenity_id)
 
     if not amenity:

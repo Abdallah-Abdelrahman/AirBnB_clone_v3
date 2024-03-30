@@ -37,24 +37,24 @@ def del_state_by_id(state_id):
 def add_state():
     '''Route to add new state'''
     if not request.is_json:
-        return jsonify('Not a JSON'), 400
+        abort(400, 'Not a JSON')
     try:
         data = request.get_json()
         if 'name' not in data:
-            return jsonify('Missing name'), 400
+            abort(400, 'Missing name')
         state = State(**data)
         state.save()
 
         return jsonify(state.to_dict()), 201
     except Exception:
-        return jsonify('Not a JSON'), 400
+        abort(400, 'Not a JSON')
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False, methods=['PUT'])
 def update_state_by_id(state_id):
     '''Route to udpate state based on id'''
     if not request.is_json:
-        return jsonify('Not a JSON'), 400
+        abort(400, 'Not a JSON')
     try:
         data = request.get_json()
         state = storage.get(State, state_id)
@@ -66,4 +66,4 @@ def update_state_by_id(state_id):
         state.save()
         return jsonify(state.to_dict()), 200
     except Exception:
-        return jsonify('Not a JSON'), 400
+        abort(400, 'Not a JSON')
