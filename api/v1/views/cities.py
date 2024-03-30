@@ -28,7 +28,7 @@ def get_city(city_id):
     if not city:
         abort(404)
     else:
-        return jsonify(city.to_dict()) , 200
+        return jsonify(city.to_dict()), 200
 
 
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['DELETE'])
@@ -43,7 +43,8 @@ def delete_city(city_id):
     return (jsonify({}), 200)
 
 
-@app_views.route('/states/<state_id>/cities', strict_slashes=False, methods=['POST'])
+@app_views.route('/states/<state_id>/cities',
+                 strict_slashes=False, methods=['POST'])
 def create_city(state_id):
     '''a post request to create a new city'''
     if not storage.get(State, state_id):
