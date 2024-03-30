@@ -46,23 +46,24 @@ def create_place(city_id):
     '''route for creating a new place'''
     if not storage.get(City, city_id):
         abort(404)
+    if not request.is_json:
+        abort(400, 'Missing name')
 
-    try:
-        data = request.get_json(force=True)
-        if 'user_id' not in data:
-            return jsonify('Missing name'), 400
-        else:
-            if not storage.get(User, data['user_id']):
-                abort(404)
-        if 'name' not in data:
-            return jsonify('Missing name'), 400
+    data = request.get_json()
+    if data is None:
+        abort(400, 'Missing name')
 
-        place = City(**data, city_id=city_id)
-        place.save()
-        return jsonify(place.to_dict()), 201
+    if 'user_id' not in data:
+        abort(400, 'Missing name')
+    if not storage.get(User, data.get('user_id')):
+        abort(404)
+    if 'name' not in data:
+        return jsonify('Missing name'), 400
 
-    except Exception:
-        return jsonify('Not a JSON'), 400
+    place = Place(**data, city_id=city_id)
+    print('----->', place)
+    place.save()
+    return jsonify(place.to_dict()), 201
 
 
 @app_views.route('/places/<place_id>', strict_slashes=False, methods=['PUT'])
