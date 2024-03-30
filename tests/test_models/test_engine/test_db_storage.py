@@ -246,6 +246,23 @@ class TestDBStorageRelations(unittest.TestCase):
             self.assertEqual(review.text, self.instances['Review'].text)
             self.assertEqual(review.id, self.instances['Review'].id)
 
+    @unittest.skipIf(not db, 'db')
+    def test_get_db(self):
+        '''Test the get storage method'''
+        data = {"email": "user@mail.com", "password": "123"}
+        instance = User(**data)
+        storage.new(instance)
+        storage.save()
+        get_instance = storage.get(User, instance.id)
+        self.assertAlmostEqual(instance, get_instance)
+
+    @unittest.skipIf(not db, 'db')
+    def test_count_db(self):
+        '''Test the count storage method'''
+        count = storage.count()
+        all_count = len(storage.all())
+        self.assertAlmostEqual(all_count, count)
+
     # def test_relation_failure(self):
     #     '''Test relations between tables are not well set'''
     #     from sqlalchemy.exc import PendingRollbackError, OperationalError
