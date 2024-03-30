@@ -45,7 +45,7 @@ def create_amenity_place(place_id, amenity_id):
     if not amenity:
         return abort(404)
     if amenity in place.amenities:
-        return jsonify(amenity), 200
+        return jsonify(amenity.to_dict()), 200
     place.amenities.append(amenity)
     place.save()
-    return jsonify(amenity), 201
+    return jsonify(amenity.to_dict()), 201
