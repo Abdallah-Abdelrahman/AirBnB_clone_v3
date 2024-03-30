@@ -9,8 +9,9 @@ from models import storage
 def status():
     '''Status route
 
-    Returns: json of status ok
-'''
+    Returns:
+        json of status ok
+    '''
     return jsonify({'status': 'OK'}), 200
 
 
