@@ -43,7 +43,9 @@ def delete_amenity(amenity_id):
 def create_amenity():
     '''a post request to create a new amenity'''
     if request.content_type != 'application/json':
-        return jsonify('Not a JSON'), 400
+        abort(400, 'Not a JSON')
+    if not request.is_json:
+        abort(400, 'Not a JSON')
 
     try:
         data = request.get_json(force=True)
@@ -62,7 +64,9 @@ def create_amenity():
 def update_amenity(amenity_id):
     '''a put request to update a amenity object'''
     if request.content_type != 'application/json':
-        return jsonify('Not a JSON'), 400
+        abort(400, 'Not a JSON')
+    if not request.is_json:
+        abort(400, 'Not a JSON')
 
     amenity = storage.get(Amenity, amenity_id)
 
