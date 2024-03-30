@@ -44,10 +44,15 @@ class BaseModel:
             dictionary representaion of class attributes,
                 with `__class__` attr to manifest class instance
         '''
+        from models import db
         _dict = {k: v.isoformat() if isinstance(v, datetime) else
                  v for k, v in self.__dict__.items()
                  if k != '_sa_instance_state'}
         _dict['__class__'] = self.__class__.__name__
+
+        if db:
+            if 'password' in _dict:
+                del _dict['password']
         return _dict
 
     def delete(self):
