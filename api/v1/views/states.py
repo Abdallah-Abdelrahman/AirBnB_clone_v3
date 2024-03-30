@@ -13,7 +13,7 @@ def get_states():
     return jsonify(resp), 200
 
 
-@app_views.route('/states/<string:state_id>',
+@app_views.route('/states/<state_id>',
                  strict_slashes=False, methods=['GET'])
 def get_state_by_id(state_id):
     '''Route to retreive state by id'''
@@ -23,7 +23,7 @@ def get_state_by_id(state_id):
     return jsonify(state.to_dict()), 200
 
 
-@app_views.route('/states/<string:state_id>',
+@app_views.route('/states/<state_id>',
                  strict_slashes=False, methods=['DELETE'])
 def del_state_by_id(state_id):
     '''Route to delete state by id'''
@@ -51,11 +51,11 @@ def add_state():
     return jsonify(state.to_dict()), 201
 
 
-@app_views.route('/states/<string:state_id>',
+@app_views.route('/states/<state_id>',
                  strict_slashes=False, methods=['PUT'])
 def update_state_by_id(state_id):
     '''Route to udpate state based on id'''
-    if request.content_type != 'application/json':
+    if not request.is_json:
         abort(400, 'Not a JSON')
     data = request.get_json()
     if data is None:
