@@ -12,7 +12,8 @@ def get_states():
     return jsonify([s.to_dict() for s in storage.all(State).values()]), 200
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False, methods=['GET'])
+@app_views.route('/states/<string:state_id>',
+                 strict_slashes=False, methods=['GET'])
 def get_state_by_id(state_id):
     '''Route to retreive state by id'''
     state = storage.get(State, state_id)
@@ -21,7 +22,7 @@ def get_state_by_id(state_id):
     return jsonify(state.to_dict()), 200
 
 
-@app_views.route('/states/<state_id>',
+@app_views.route('/states/<string:state_id>',
                  strict_slashes=False, methods=['DELETE'])
 def del_state_by_id(state_id):
     '''Route to delete state by id'''
@@ -40,6 +41,8 @@ def add_state():
         abort(400, 'Not a JSON')
     try:
         data = request.get_json()
+        if data is None:
+            abort(400, 'Not a JSON')
         if 'name' not in data:
             abort(400, 'Missing name')
         state = State(**data)
@@ -57,6 +60,8 @@ def update_state_by_id(state_id):
         abort(400, 'Not a JSON')
     try:
         data = request.get_json()
+        if data is None:
+            abort(400, 'Not a JSON')
         state = storage.get(State, state_id)
         if not state:
             abort(404)
