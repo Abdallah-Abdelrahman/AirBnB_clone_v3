@@ -1,12 +1,12 @@
 #!/usr/bin/python3
-'''Handels City RESTFul API actions'''
+'''Handels amenity RESTFul API actions'''
 from flask import request, abort, jsonify
 from models import storage
 from api.v1.views import app_views
 from models.amenity import Amenity
 
 
-@app_views.route('/amenities', strict_slashes=False)
+@app_views.route('amenities', strict_slashes=False)
 def get_amenities():
     '''gets all amenities'''
 
@@ -16,12 +16,12 @@ def get_amenities():
 
 @app_views.route('amenities/<amenity_id>', strict_slashes=False)
 def get_amenity(amenity_id):
-    '''get's a amenity using it's id '''
+    '''get a amenity by id '''
     amenity = storage.get(Amenity, amenity_id)
     if not amenity:
         abort(404)
     else:
-        return jsonify(amenity.to_dict(), 200)
+        return (jsonify(amenity.to_dict()), 200)
 
 
 @app_views.route('amenities/<amenity_id>',
