@@ -38,7 +38,7 @@ def del_state_by_id(state_id):
 @app_views.route('/states', strict_slashes=False, methods=['POST'])
 def add_state():
     '''Route to add new state'''
-    if request.content_type != 'application/json':
+    if not request.is_json:
         abort(400, 'Not a JSON')
     data = request.get_json()
     if data is None:
