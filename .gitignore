@@ -13,3 +13,4 @@ install*
 100-dump.sql
 versions
 **/7-dump.sql
+_models
