@@ -42,29 +42,23 @@ def delete_amenity(amenity_id):
                  strict_slashes=False, methods=['POST'])
 def create_amenity():
     '''a post request to create a new amenity'''
-    if request.content_type != 'application/json':
-        abort(400, 'Not a JSON')
     if not request.is_json:
         abort(400, 'Not a JSON')
 
-    try:
-        data = request.get_json(force=True)
-        if 'name' not in data:
-            return jsonify('Missing name'), 400
-        amenity = Amenity(**data)
-        amenity.save()
-        return jsonify(amenity.to_dict()), 201
-
-    except Exception:
-        return jsonify('Not a JSON'), 400
+    data = request.get_json()
+    if data is None:
+        abort(400, 'Not a JSON')
+    if 'name' not in data:
+        return jsonify('Missing name'), 400
+    amenity = Amenity(**data)
+    amenity.save()
+    return jsonify(amenity.to_dict()), 201
 
 
 @app_views.route('amenities/<amenity_id>',
                  strict_slashes=False, methods=['PUT'])
 def update_amenity(amenity_id):
     '''a put request to update a amenity object'''
-    if request.content_type != 'application/json':
-        abort(400, 'Not a JSON')
     if not request.is_json:
         abort(400, 'Not a JSON')
 
@@ -73,14 +67,10 @@ def update_amenity(amenity_id):
     if not amenity:
         abort(404)
 
-    try:
-        data = request.get_json(force=True)
-        for k, v in data.items():
-            if k not in ('id', 'created_at', 'updated_at'):
-                setattr(amenity, k, v)
+    data = request.get_json()
+    for k, v in data.items():
+        if k not in ('id', 'created_at', 'updated_at'):
+            setattr(amenity, k, v)
 
-            amenity.save()
-        return (jsonify(amenity.to_dict()), 200)
-
-    except Exception:
-        return jsonify('Not a JSON'), 400
+    amenity.save()
+    return (jsonify(amenity.to_dict()), 200)
