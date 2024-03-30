@@ -39,7 +39,7 @@ def add_user():
     if not request.is_json:
         return jsonify('Not a JSON'), 400
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
         if 'email' not in data:
             return jsonify('Missing email'), 400
         if 'password' not in data:
@@ -58,7 +58,7 @@ def update_user(user_id):
     if not request.is_json:
         return jsonify('Not a JSON'), 400
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
         user = storage.get(User, user_id)
         if not user:
             abort(404)
