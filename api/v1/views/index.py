@@ -1,8 +1,9 @@
 #!/usr/bin/python3
-'''Index entry for the blueprint.
+"""Index entry for the blueprint.
 The module has 2 endpoints handler one for the /status
 and the other /stats for counting all the instances as json
-'''
+"""
+
 from api.v1.views import app_views
 from flask import jsonify
 from models import storage
