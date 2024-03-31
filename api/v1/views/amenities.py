@@ -1,12 +1,13 @@
 #!/usr/bin/python3
 '''Handels amenity RESTFul API actions'''
+
 from flask import request, abort, jsonify
 from models import storage
 from api.v1.views import app_views
 from models.amenity import Amenity
 
 
-@app_views.route('amenities', strict_slashes=False)
+@app_views.route('/amenities', methods=['GET'])
 def get_amenities():
     '''gets all amenities'''
 
@@ -15,7 +16,7 @@ def get_amenities():
     return (jsonify(resp), 200)
 
 
-@app_views.route('amenities/<amenity_id>', strict_slashes=False)
+@app_views.route('/amenities/<amenity_id>', methods=['GET'])
 def get_amenity(amenity_id):
     '''get a amenity by id '''
     amenity = storage.get(Amenity, amenity_id)
@@ -25,7 +26,7 @@ def get_amenity(amenity_id):
         return (jsonify(amenity.to_dict()), 200)
 
 
-@app_views.route('amenities/<amenity_id>',
+@app_views.route('/amenities/<amenity_id>',
                  strict_slashes=False, methods=['DELETE'])
 def delete_amenity(amenity_id):
     '''delets an existing amenity'''
@@ -38,12 +39,13 @@ def delete_amenity(amenity_id):
     return (jsonify({}), 200)
 
 
-@app_views.route('amenities',
-                 strict_slashes=False, methods=['POST'])
+@app_views.route('/amenities', methods=['POST'])
 def create_amenity():
     '''a post request to create a new amenity'''
     if not request.is_json:
         abort(400, 'Not a JSON')
+    if request.content_type != "application/json":
+        abort(400, "Not a JSON")
 
     data = request.get_json()
     if data is None:
@@ -55,12 +57,13 @@ def create_amenity():
     return jsonify(amenity.to_dict()), 201
 
 
-@app_views.route('amenities/<amenity_id>',
-                 strict_slashes=False, methods=['PUT'])
+@app_views.route('amenities/<amenity_id>', methods=['PUT'])
 def update_amenity(amenity_id):
     '''a put request to update a amenity object'''
     if not request.is_json:
         abort(400, 'Not a JSON')
+    if request.content_type != "application/json":
+        abort(400, "Not a JSON")
 
     amenity = storage.get(Amenity, amenity_id)
 
