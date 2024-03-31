@@ -28,6 +28,7 @@ class User(BaseModel, Base):
     '''
     __tablename__ = 'users'
 
+    """
     def __init__(self, *args, **kw):
         '''Initialize the instance'''
         super().__init__(*args, **kw)
@@ -35,3 +36,4 @@ class User(BaseModel, Base):
             pwd = md5()
             pwd.update(kw['password'].encode())
             self.password = pwd.hexdigest()
+    """
