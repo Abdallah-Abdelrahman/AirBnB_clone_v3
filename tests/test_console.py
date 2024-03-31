@@ -12,7 +12,7 @@ import inspect
 from console import HBNBCommand
 from unittest.mock import patch
 from io import StringIO
-from models import db, storage
+from models import storage, db
 import MySQLdb
 
 

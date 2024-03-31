@@ -252,8 +252,7 @@ class TestDBStorageRelations(unittest.TestCase):
         '''Test the get storage method'''
         data = {"email": "user@mail.com", "password": "123"}
         instance = User(**data)
-        storage.new(instance)
-        storage.save()
+        instance.save()
         get_instance = storage.get(User, instance.id)
         self.assertAlmostEqual(instance, get_instance)
 

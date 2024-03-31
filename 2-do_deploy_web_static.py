@@ -1,41 +1,30 @@
 #!/usr/bin/python3
-'''script (based on the file 1-pack_web_static.py) that distributes an archive
-to your web servers, using the function do_deploy
+"""
+Fabric script based on the file 1-pack_web_static.py that distributes an
+archive to the web servers
+"""
 
-Attrs:
-    env: enviroment variables for fabric
-'''
-from fabric.api import put, env, sudo
+from fabric.api import put, run, env
 from os.path import exists
-
-
-env.user = 'ubuntu'
-env.hosts = ['52.91.118.253', '35.153.16.72']
-env.key_filename = '~/.ssh/school'
+env.hosts = ['142.44.167.228', '144.217.246.195']
 
 
 def do_deploy(archive_path):
-    '''Distributes an archive to my web servers'''
-    if not exists(archive_path):
+    """distributes an archive to the web servers"""
+    if exists(archive_path) is False:
         return False
-
     try:
-        # extract archive name w/out extension
-        archive = archive_path.split('/')[-1].split('.')[0]
-        target = f'/data/web_static/releases/{archive}'
-        # upload archive to /tmp/
+        file_n = archive_path.split("/")[-1]
+        no_ext = file_n.split(".")[0]
+        path = "/data/web_static/releases/"
         put(archive_path, '/tmp/')
-        sudo(f'mkdir -p {target}')
-        sudo(f'tar -xzf /tmp/{archive}.tgz -C {target}')
-        sudo(f'rm /tmp/{archive}.tgz')
-        sudo(f'rsync -a {target}/web_static/ {target}')
-        sudo(f'rm -rf {target}/web_static')
-        # remove symbolic link
-        sudo('rm -rf /data/web_static/current')
-        # create new link
-        sudo(f'ln -s {target} /data/web_static/current')
-        print("New version deployed!")
-
+        run('mkdir -p {}{}/'.format(path, no_ext))
+        run('tar -xzf /tmp/{} -C {}{}/'.format(file_n, path, no_ext))
+        run('rm /tmp/{}'.format(file_n))
+        run('mv {0}{1}/web_static/* {0}{1}/'.format(path, no_ext))
+        run('rm -rf {}{}/web_static'.format(path, no_ext))
+        run('rm -rf /data/web_static/current')
+        run('ln -s {}{}/ /data/web_static/current'.format(path, no_ext))
         return True
     except Exception:
         return False
