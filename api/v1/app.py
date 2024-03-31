@@ -1,5 +1,10 @@
 #!/usr/bin/python3
-"""Create a new Flask app"""
+'''The module runs flask application running on port 5000
+and host 0.0.0.0 if it didn't find the corresponding env variables.
+
+Attrs:
+    app: application that run flask wsgi
+'''
 from os import environ
 
 from flask import Flask, jsonify, make_response
