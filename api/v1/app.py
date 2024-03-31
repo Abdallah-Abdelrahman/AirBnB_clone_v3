@@ -1,41 +1,49 @@
 #!/usr/bin/python3
-"""Create a new Flask app"""
+'''The module runs flask application running on port 5000
+and host 0.0.0.0 if it didn't find the corresponding env variables.
+
+Attrs:
+    app: application that run flask wsgi
+'''
 from os import environ
-
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify
 from flask_cors import CORS
-
 from api.v1.views import app_views
 from models import storage
 
 app = Flask(__name__)
-# CORS instance allowing all origins
 CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
-
+app.register_blueprint(app_views)
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
 app.config['JSON_SORT_KEYS'] = True
 app.url_map.strict_slashes = False
-app.register_blueprint(app_views)
 
 
 @app.teardown_appcontext
-def teardown_appcontext(self):
-    """Teardown appcontext"""
+def teardown_db(exception):
+    '''remove the current SQLAlchemy Session after each request.
+
+    Args:
+        exception: Exception
+    '''
     storage.close()
 
 
 @app.errorhandler(404)
-def not_found(error):
-    """Handler for 404 errors"""
-    return make_response(jsonify({"error": "Not found"}), 404)
+def page_not_found(e):
+    '''handles 404 errors when resource not found
+
+    Args:
+        e: error
+    '''
+    return jsonify({"error": "Not found"}), 404
 
 
-if __name__ == "__main__":
-    host = environ.get("HBNB_API_HOST")
-    port = environ.get("HBNB_API_PORT")
+if __name__ == '__main__':
+    host = environ.get('HBNB_API_HOST')
+    port = environ.get('HBNB_API_PORT')
     if not host:
-        host = "0.0.0.0"
-
+        host = '0.0.0.0'
     if not port:
-        port = "5000"
+        port = '5000'
     app.run(host=host, port=port, threaded=True)
