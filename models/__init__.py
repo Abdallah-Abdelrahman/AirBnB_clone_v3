@@ -1,18 +1,19 @@
 #!/usr/bin/python3
-"""
-initialize the models package
-"""
+'''Module creates a unique FileStorage instance for the application
 
+Attrs:
+    storage: an instance of FileStorage
+'''
+
+from models.engine.file_storage import FileStorage
+from models.engine.db_storage import DBStorage
 from os import getenv
 
 
-storage_t = getenv("HBNB_TYPE_STORAGE")
-db = storage_t == 'db'
+db = (False, True)['db' == getenv("HBNB_TYPE_STORAGE")]
 
-if storage_t == "db":
-    from models.engine.db_storage import DBStorage
+if db:
     storage = DBStorage()
 else:
-    from models.engine.file_storage import FileStorage
     storage = FileStorage()
 storage.reload()

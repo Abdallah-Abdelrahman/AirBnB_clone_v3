@@ -1,21 +1,21 @@
-#!/usr/bin/python
-""" holds class Amenity"""
-import models
-from models.base_model import BaseModel, Base
-from os import getenv
-import sqlalchemy
-from sqlalchemy import Column, String
+#!/usr/bin/python3
+'''Module defines Amenity'''
+
 from sqlalchemy.orm import relationship
+from models.base_model import BaseModel, Base, store
+from sqlalchemy import Column, String
 
 
+@store('place_amenities',
+       name=(Column(String(128), nullable=False), ''),
+       place_amenities=(relationship("Place",
+                        secondary="place_amenity",
+                        back_populates="amenities"),)
+       )
 class Amenity(BaseModel, Base):
-    """Representation of Amenity """
-    __tablename__ = 'amenities'
-    if models.storage_t == 'db':
-        name = Column(String(128), nullable=False)
-    else:
-        name = ""
+    '''Amenity class.
 
-    def __init__(self, *args, **kwargs):
-        """initializes Amenity"""
-        super().__init__(*args, **kwargs)
+    Atrrs:
+        name: string
+    '''
+    __tablename__ = 'amenities'
