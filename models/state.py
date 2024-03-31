@@ -1,28 +1,35 @@
 #!/usr/bin/python3
-'''Module defines State'''
-
-from models.base_model import BaseModel, Base, store
-from sqlalchemy import Column, String
-from sqlalchemy.orm import relationship
+""" holds class State"""
+import models
+from models.base_model import BaseModel, Base
 from models.city import City
-from typing import List
+from os import getenv
+import sqlalchemy
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.orm import relationship
 
 
-@store('cities',
-       name=(Column(String(128), nullable=False), ''),
-       cities=(relationship('City', cascade='all, delete-orphan',
-                            backref='state'), )
-       )
 class State(BaseModel, Base):
-    '''State class
+    """Representation of state """
+    __tablename__ = 'states'
+    if models.storage_t == "db":
+        name = Column(String(128), nullable=False)
+        cities = relationship("City", backref="state",
+                              cascade='all, delete-orphan')
+    else:
+        name = ""
 
-    Atrrs:
-        name(str):
-    '''
-    __tablename__ = "states"
+    def __init__(self, *args, **kwargs):
+        """initializes state"""
+        super().__init__(*args, **kwargs)
 
-    @property
-    def cities(self) -> List:
-        """cities getter attribute"""
-        from models import storage
-        return [v for v in storage.all(City).values() if v.state_id == self.id]
+    if models.storage_t != "db":
+        @property
+        def cities(self):
+            """getter for list of city instances related to the state"""
+            city_list = []
+            all_cities = models.storage.all(City)
+            for city in all_cities.values():
+                if city.state_id == self.id:
+                    city_list.append(city)
+            return city_list
