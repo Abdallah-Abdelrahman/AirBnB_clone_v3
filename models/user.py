@@ -28,12 +28,18 @@ class User(BaseModel, Base):
     '''
     __tablename__ = 'users'
 
-    """
     def __init__(self, *args, **kw):
-        '''Initialize the instance'''
+        '''Initialize the instance
+
+        Args:
+            args: positional arguments
+            kw: named arguments
+
+        Note:
+            it hashes user.password using md5
+        '''
         super().__init__(*args, **kw)
         if 'password' in kw:
             pwd = md5()
             pwd.update(kw['password'].encode())
             self.password = pwd.hexdigest()
-    """

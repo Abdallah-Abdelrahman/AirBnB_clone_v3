@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 '''Handels the User REST api actions'''
-from api.v1.views import app_views
+
 from flask import jsonify, abort, request
+from api.v1.views import app_views
 from models import storage
 from models.user import User
 
@@ -13,23 +14,22 @@ def get_users():
     return jsonify(resp), 200
 
 
-@app_views.route('users/<user_id>', methods=['GET'])
+@app_views.route('users/<string:user_id>', methods=['GET'])
 def get_user_by_id(user_id):
     '''Retreves a user object'''
     user = storage.get(User, user_id)
     if user is None:
-        abort(404)
+        return abort(404)
     return jsonify(user.to_dict()), 200
 
 
-@app_views.route('users/<user_id>',
-                 methods=['DELETE'])
+@app_views.route('users/<string:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     '''deletes a user object'''
     user = storage.get(User, user_id)
     if user is None:
-        abort(404)
-    storage.delete(user)
+        return abort(404)
+    user.delete()
     storage.save()
     return jsonify({}), 200
 
@@ -37,8 +37,8 @@ def delete_user(user_id):
 @app_views.route('/users', methods=['POST'])
 def add_user():
     '''creates a new user object'''
-    if not request.is_json:
-        abort(400, 'Not a JSON')
+    if request.content_type != "application/json":
+        return abort(400, "Not a JSON")
 
     data = request.get_json()
 
@@ -55,17 +55,17 @@ def add_user():
     return jsonify(new_user.to_dict()), 201
 
 
-@app_views.route('users/<user_id>', methods=['PUT'])
+@app_views.route('users/<string:user_id>', methods=['PUT'])
 def update_user(user_id):
     '''Updates a User object'''
     user = storage.get(User, user_id)
     if not user:
-        abort(404)
-    if not request.is_json:
-        abort(400, 'Not a JSON')
+        return abort(404)
+    if request.content_type != "application/json":
+        return abort(400, "Not a JSON")
     data = request.get_json()
     if data is None:
-        abort(400, 'Not a JSON')
+        return abort(400, 'Not a JSON')
     for k, v in data.items():
         if k not in ('id', 'email', 'created_at',
                      'updated_at'):
