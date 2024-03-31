@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 '''Handels amenity RESTFul API actions'''
 
-from flask import request, abort, jsonify
-from models import storage
+from flask import abort, jsonify, make_response, request
+
 from api.v1.views import app_views
+from models import storage
 from models.amenity import Amenity
 
 
@@ -26,8 +27,7 @@ def get_amenity(amenity_id):
         return (jsonify(amenity.to_dict()), 200)
 
 
-@app_views.route('/amenities/<amenity_id>',
-                 strict_slashes=False, methods=['DELETE'])
+@app_views.route('/amenities/<amenity_id>', methods=['DELETE'])
 def delete_amenity(amenity_id):
     '''delets an existing amenity'''
     amenity = storage.get(Amenity, amenity_id)
@@ -54,7 +54,7 @@ def create_amenity():
         return jsonify('Missing name'), 400
     amenity = Amenity(**data)
     amenity.save()
-    return jsonify(amenity.to_dict()), 201
+    return make_response(jsonify(amenity.to_dict()), 201)
 
 
 @app_views.route('amenities/<amenity_id>', methods=['PUT'])
