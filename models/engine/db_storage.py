@@ -78,11 +78,16 @@ class DBStorage:
         self.__session.close()
 
     def get(self, cls, id):
-        """Get instance by id"""
-        if not cls or cls.__name__ not in classes:
-            return None
-        id_ = '{}.{}'.format(cls.__name__, id)
-        return self.all(cls).get(id_)
+        """Get instance by id
+
+        Args:
+            cls: class
+            id: id
+        """
+        obj = None
+        if cls is not None and issubclass(cls, BaseModel):
+            obj = self.__session.query(cls).filter(cls.id == id).first()
+        return obj
 
     def count(self, cls=None):
         """Count instance
