@@ -98,6 +98,7 @@ def search_places():
     states = data.get('states', [])
     cities = data.get('cities', [])
     amenities = data.get('amenities', [])
+    existing_places = {}
 
     city_ids = set()
     resp = []
@@ -111,19 +112,29 @@ def search_places():
     if cities:
         city_ids.update(cities)
 
+    # curl -X POST URL -d {'aminites': []}
     for id_ in city_ids:
         city = storage.get(City, id_)
         for place in city.places if city else []:
             if amenities:
                 for amnt in place.amenities:
                     if amnt.id in amenities:
-                        resp.append(place.to_dict())
-                        amenities.remove(amnt.id)
-            else:
+                        if existing_places.get(place.id) is None:
+                            resp.append(place.to_dict())
+                            existing_places[place.id] = True
+            elif existing_places.get(place.id) is None:
                 resp.append(place.to_dict())
+                existing_places[place.id] = True
 
     if len(city_ids) == 0:
         places = storage.all(Place)
+        if amenities:
+            for place in places:
+                for amnt in place.amenities:
+                    if amnt.id in amenities:
+                        if existing_places.get(place.id) is None:
+                            resp.append(place.to_dict())
+                            existing_places[place.id] = True
         resp = [p.to_dict() for p in places.values()]
 
     return jsonify(resp), 200
