@@ -73,7 +73,6 @@ class DBStorage:
 
     def close(self):
         """Close SQLAlqechmy session"""
-        self.__session.rollback()
         self.__session.close()
         self.__session.remove()
 
@@ -86,7 +85,7 @@ class DBStorage:
         """
         obj = None
         if cls is not None and issubclass(cls, BaseModel):
-            obj = self.__session.query(cls).filter(cls.id == id).first()
+            obj = self.__session.query(cls).get(id)
         return obj
 
     def count(self, cls=None):
@@ -98,10 +97,7 @@ class DBStorage:
             number of insances of this cls or all the clasess if None
         """
         if cls is None:
-            total = 0
-            for cls in classes.values():
-                total += len(self.all(cls))
-            return total
+            return sum([len(self.all(cls)) for cls in classes.values()])
         elif cls not in classes.values():
             return 0
         else:
