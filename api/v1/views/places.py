@@ -135,6 +135,7 @@ def search_places():
                         if existing_places.get(place.id) is None:
                             resp.append(place.to_dict())
                             existing_places[place.id] = True
-        resp = [p.to_dict() for p in places.values()]
+        else:
+            resp = [p.to_dict() for p in places.values()]
 
     return jsonify(resp), 200
