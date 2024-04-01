@@ -83,10 +83,10 @@ class DBStorage:
             cls: class
             id: id
         """
-        obj = None
+        instance = None
         if cls is not None and issubclass(cls, BaseModel):
-            obj = self.__session.query(cls).get(id)
-        return obj
+            instance = self.__session.query(cls).filter(cls.id == id).first()
+        return instance
 
     def count(self, cls=None):
         """Count instance
@@ -97,7 +97,7 @@ class DBStorage:
             number of insances of this cls or all the clasess if None
         """
         if cls is None:
-            return sum([len(self.all(cls)) for cls in classes.values()])
+            return sum([len(self.all(cls_)) for cls_ in classes.values()], 0)
         elif cls not in classes.values():
             return 0
         else:
