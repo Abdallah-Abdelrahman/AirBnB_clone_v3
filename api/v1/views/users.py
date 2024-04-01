@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 '''Handels the User REST api actions'''
 
-from flask import jsonify, abort, request
-from api.v1.views import app_views
-from models import storage
 from models.user import User
+from api.v1.views import app_views
+from flask import jsonify, abort, request
+from models import storage
 
 
 @app_views.route('/users', methods=['GET'])
@@ -38,7 +38,9 @@ def delete_user(user_id):
 def add_user():
     '''creates a new user object'''
     if request.content_type != "application/json":
-        return abort(400, "Not a JSON")
+        abort(400, "Not a JSON")
+    if not request.is_json:
+        abort(400, "Not a JSON")
 
     data = request.get_json()
 

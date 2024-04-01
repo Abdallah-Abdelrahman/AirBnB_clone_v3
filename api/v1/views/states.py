@@ -6,15 +6,14 @@ from models import storage
 from models.state import State
 
 
-@app_views.route('/states', strict_slashes=False, methods=['GET'])
+@app_views.route('/states', methods=['GET'])
 def get_states():
     '''Route to retreive all states'''
     resp = [s.to_dict() for s in storage.all(State).values()]
     return jsonify(resp), 200
 
 
-@app_views.route('/states/<state_id>',
-                 strict_slashes=False, methods=['GET'])
+@app_views.route('/states/<state_id>', methods=['GET'])
 def get_state_by_id(state_id):
     '''Route to retreive state by id'''
     state = storage.get(State, state_id)
@@ -23,8 +22,7 @@ def get_state_by_id(state_id):
     return jsonify(state.to_dict()), 200
 
 
-@app_views.route('/states/<state_id>',
-                 strict_slashes=False, methods=['DELETE'])
+@app_views.route('/states/<state_id>', methods=['DELETE'])
 def del_state_by_id(state_id):
     '''Route to delete state by id'''
     state = storage.get(State, state_id)
@@ -35,7 +33,7 @@ def del_state_by_id(state_id):
     return jsonify({}), 200
 
 
-@app_views.route('/states', strict_slashes=False, methods=['POST'])
+@app_views.route('/states', methods=['POST'])
 def add_state():
     '''Route to add new state'''
     if not request.is_json:
@@ -51,8 +49,7 @@ def add_state():
     return jsonify(state.to_dict()), 201
 
 
-@app_views.route('/states/<state_id>',
-                 strict_slashes=False, methods=['PUT'])
+@app_views.route('/states/<state_id>', methods=['PUT'])
 def update_state_by_id(state_id):
     '''Route to udpate state based on id'''
     if not request.is_json:

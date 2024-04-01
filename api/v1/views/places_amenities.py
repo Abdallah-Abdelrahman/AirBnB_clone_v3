@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 '''Review REST api the Associative table places_amenities'''
+from models.amenity import Amenity
+from models.place import Place
 from api.v1.views import app_views
 from flask import jsonify, abort
 from models import storage
-from models.amenity import Amenity
-from models.place import Place
 
 
-@app_views.route('places/<place_id>/amenities', strict_slashes=False)
+@app_views.route('places/<place_id>/amenities', methods=['GET'])
 def get_place_aminties(place_id):
     '''Route for retrieveing all amenities for a place'''
     amnts = []
@@ -19,8 +19,8 @@ def get_place_aminties(place_id):
     return jsonify(amnts), 200
 
 
-@app_views.route('places/<place_id>/amenities/<amenity_id>',
-                 strict_slashes=False, methods=['DELETE'])
+@app_views.route('places/<string:place_id>/amenities/<string:amenity_id>',
+                 methods=['DELETE'])
 def delete_amentiy_plac(place_id, amenity_id):
     '''route to delete amentiy of a place'''
     place = storage.get(Place, place_id)
@@ -34,8 +34,8 @@ def delete_amentiy_plac(place_id, amenity_id):
     return jsonify({}), 200
 
 
-@app_views.route('places/<place_id>/amenities/<amenity_id>',
-                 strict_slashes=False, methods=['POST'])
+@app_views.route('places/<string:place_id>/amenities/<string:amenity_id>',
+                 methods=['POST'])
 def create_amenity_place(place_id, amenity_id):
     '''route for creating a new amenity of place'''
     place = storage.get(Place, place_id)
