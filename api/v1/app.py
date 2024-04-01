@@ -1,5 +1,9 @@
 #!/usr/bin/python3
-"""Create a new Flask app"""
+"""Create a new Flask app.
+
+Attrs:
+    app: flask application
+"""
 from os import getenv
 
 from flask import Flask, jsonify, make_response
