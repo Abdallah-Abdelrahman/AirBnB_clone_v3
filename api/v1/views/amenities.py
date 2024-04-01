@@ -12,7 +12,7 @@ from models.amenity import Amenity
 def get_amenities():
     """Get all amenities"""
     amenities = [
-            amenity.to_dict() for amenity in storage.all("Amenity").values()
+            amenity.to_dict() for amenity in storage.all('Amenity').values()
             ]
     return jsonify(amenities), 200
 

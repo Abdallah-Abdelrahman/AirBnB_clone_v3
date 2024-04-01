@@ -1,129 +1,104 @@
 #!/usr/bin/python3
-"""db_storage module"""
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
-from os import getenv
-from models.base_model import Base
-from models.user import User
-from models.state import State
+"""
+Contains the class DBStorage
+"""
+
+import models
+from models.amenity import Amenity
+from models.base_model import BaseModel, Base
 from models.city import City
 from models.place import Place
 from models.review import Review
-from models.amenity import Amenity
+from models.state import State
+from models.user import User
+from os import getenv
+import sqlalchemy
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 
-env = ['HBNB_MYSQL_USER', 'HBNB_MYSQL_PWD',
-       'HBNB_MYSQL_HOST', 'HBNB_MYSQL_DB',
-       'HBNB_TYPE_STORAGE', 'HBNB_ENV']
-
-classes = [User, State, City, Place, Review, Amenity]
+classes = {"Amenity": Amenity, "City": City,
+           "Place": Place, "Review": Review, "State": State, "User": User}
 
 
 class DBStorage:
-    """DBStorage class
-
-    Attributes:
-        __engine: None
-        __session: None
-
-
-    Methods:
-        __init__(self)
-        reload(self)
-        all(self, cls=None)
-        new(self, obj)
-        save(self)
-        delete(self, obj=None)
-    """
+    """interaacts with the MySQL database"""
     __engine = None
     __session = None
 
     def __init__(self):
-        """initialize engine
-        """
-        MYSQL = {}
-        for e in env:
-            MYSQL[e.split('_')[-1]] = getenv(e)
-        # dialect+driver://username:password@host:port/database
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
-                                      .format(MYSQL['USER'], MYSQL['PWD'],
-                                              MYSQL['HOST'], MYSQL['DB']),
-                                      pool_pre_ping=True)
-        if MYSQL['ENV'] == 'test':
+        """Instantiate a DBStorage object"""
+        HBNB_MYSQL_USER = getenv('HBNB_MYSQL_USER')
+        HBNB_MYSQL_PWD = getenv('HBNB_MYSQL_PWD')
+        HBNB_MYSQL_HOST = getenv('HBNB_MYSQL_HOST')
+        HBNB_MYSQL_DB = getenv('HBNB_MYSQL_DB')
+        HBNB_ENV = getenv('HBNB_ENV')
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
+                                      format(HBNB_MYSQL_USER,
+                                             HBNB_MYSQL_PWD,
+                                             HBNB_MYSQL_HOST,
+                                             HBNB_MYSQL_DB))
+        if HBNB_ENV == "test":
             Base.metadata.drop_all(self.__engine)
 
-    def reload(self):
-        """create all tables in the database
-        """
-        Base.metadata.create_all(self.__engine)
-        self.__session = scoped_session(sessionmaker(bind=self.__engine,
-                                        expire_on_commit=False))()
+        self.is_closed = False
 
     def all(self, cls=None):
-        """query on the current database session
-        """
-        res = {}
-        objs = []
-        if cls:
-            objs = self.__session.query(cls).all()
-        else:
-            for c in classes:
-                objs.extend(self.__session.query(c).all())
-
-        if objs:
-            for obj in objs:
-                key = f"{obj.__class__.__name__}.{obj.id}"
-                res[key] = obj
-        return res
+        """query on the current database session"""
+        new_dict = {}
+        for clss in classes:
+            if cls is None or cls is classes[clss] or cls is clss:
+                objs = self.__session.query(classes[clss]).all()
+                for obj in objs:
+                    key = obj.__class__.__name__ + '.' + obj.id
+                    new_dict[key] = obj
+        return (new_dict)
 
     def new(self, obj):
-        """add object to the current database session
-        """
+        """add the object to the current database session"""
         self.__session.add(obj)
 
     def save(self):
-        """commit all changes of the current db session
-        """
+        """commit all changes of the current database session"""
         self.__session.commit()
 
     def delete(self, obj=None):
-        """delete from current db session if obj is not none
-        """
-        if obj:
+        """delete from the current database session obj if not None"""
+        if obj is not None:
             self.__session.delete(obj)
 
+    def reload(self):
+        """reloads data from the database"""
+        Base.metadata.create_all(self.__engine)
+        sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        Session = scoped_session(sess_factory)
+        self.__session = Session
+
     def close(self):
-        """call remove method on the private session attribute
-        """
-        self.__session.close()
-
-    def drop(self, cls=None):
-        """drop all tables
-        """
-        if cls:
-            self.__session.query(cls).delete()
-
-    def rollback(self):
-        """rollback all changes
-        """
+        """call remove() method on the private session attribute"""
         self.__session.rollback()
+        self.__session.close()
+        self.__session.remove()
+        self.is_closed = True
 
     def get(self, cls, id):
-        """Returns the object based on the class and ID
-        """
-        if cls not in classes:
-            return None
-        class_objects = self.all(cls)
-        id_ = f"{cls.__name__}.{id}"
-        if id_ in class_objects:
-            return class_objects[id_]
-        else:
-            return None
+        """Get One Object"""
+        obj = None
+        if cls is not None and issubclass(cls, BaseModel):
+            obj = self.__session.query(cls).filter(cls.id == id).first()
+        return obj
 
     def count(self, cls=None):
-        """Returns the number of objects in a class.
-          If no class is passed, returns the count of all objects.
-        """
+        """Returns the number of objects in storage matching the given class"""
         if cls is None:
-            return len(self.all())
+            total = 0
+            for cls in classes.values():
+                total += len(self.all(cls))
+            return total
+        elif cls not in classes.values():
+            return 0
         else:
             return len(self.all(cls))
+
+    def close_session(self):
+        """Close the current database session"""
+        self.__session.close()
