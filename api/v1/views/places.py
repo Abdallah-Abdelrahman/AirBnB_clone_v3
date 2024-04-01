@@ -97,36 +97,28 @@ def search_places():
         abort(400, "Not a JSON")
     states = data.get('states', [])
     cities = data.get('cities', [])
-    amenity_ids = data.get('amenities', [])
+    amenities = data.get('amenities', [])
 
-    # Initialize a set to store the ids of the cities to be searched
     city_ids = set()
+    resp = []
 
     if states:
         for state_id in states:
             state = storage.get(State, state_id)
-            if state:
-                city_ids.update(city.id for city in state.cities)
+            for city in state.cities if state else []:
+                city_ids.update(city.id)
 
     if cities:
         city_ids.update(cities)
 
-    if not city_ids:
-        places = storage.all(Place).values()
-    else:
-        places = [
-                place for place in storage.all(Place).values()
-                if place.city_id in city_ids
-                ]
+    for id_ in city_ids:
+        city = storage.get(City, id_)
+        for place in city.places if city else []:
+            if amenities:
+                for amnt in place.amenities:
+                    if amnt.id in amenities:
+                        resp.append(place)
+            else:
+                resp.append(place)
 
-    # If amenities are provided, further filter the places based on amenities
-    if amenity_ids:
-        places = [
-                place for place in places if all(
-                    amenity_id in (
-                        a.id for a in place.amenities
-                        ) for amenity_id in amenity_ids
-                    )
-                ]
-
-    return jsonify([place.to_dict() for place in places]), 200
+    return jsonify(resp), 200
