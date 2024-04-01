@@ -97,8 +97,10 @@ class DBStorage:
             number of insances of this cls or all the clasess if None
         """
         if cls is None:
-            return sum([len(self.all(cls_)) for cls_ in classes.values()], 0)
-        elif cls not in classes.values():
+            counter = 0
+            for cls_ in classes.values():
+                counter += len(self.all(cls_))
+            return counter
+        if cls not in classes.values():
             return 0
-        else:
-            return len(self.all(cls))
+        return len(self.all(cls))
