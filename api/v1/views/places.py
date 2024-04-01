@@ -2,7 +2,6 @@
 """Places endpoint"""
 
 from flask import abort, jsonify, make_response, request
-import logging
 from api.v1.views import app_views
 from models import storage
 from models.state import State
@@ -94,6 +93,8 @@ def search_places():
         abort(400, "Not a JSON")
 
     data = request.get_json()
+    if data is None:
+        abort(400, "Not a JSON")
     states = data.get('states', [])
     cities = data.get('cities', [])
     amenity_ids = data.get('amenities', [])
