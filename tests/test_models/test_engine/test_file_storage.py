@@ -69,9 +69,10 @@ test_file_storage.py'])
                             "{:s} method needs a docstring".format(func[0]))
 
 
+@unittest.skipIf(models.storage_t == 'db', "not testing file storage")
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+
     def test_all_returns_dict(self):
         """Test that all returns the FileStorage.__objects attr"""
         storage = FileStorage()
@@ -79,7 +80,6 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(type(new_dict), dict)
         self.assertIs(new_dict, storage._FileStorage__objects)
 
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_new(self):
         """test that new adds an object to the FileStorage.__objects attr"""
         storage = FileStorage()
@@ -95,7 +95,6 @@ class TestFileStorage(unittest.TestCase):
                 self.assertEqual(test_dict, storage._FileStorage__objects)
         FileStorage._FileStorage__objects = save
 
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
         storage = FileStorage()
@@ -121,11 +120,10 @@ class TestFileStorage(unittest.TestCase):
             "email": "nour_12@yahoo.com",
             "password": "12312345"
         }
-        users = User(**date)
-        storage.new(users)
-        storage.save()
-        get_user = storage.get(User, users.id)
-        self.assertAlmostEqual(users, get_user)
+        user = User(**date)
+        user.save()
+        get_user = storage.get(User, user.id)
+        self.assertAlmostEqual(user, get_user)
 
     def test_count_file_storage(self):
         """tset storage_count_method"""

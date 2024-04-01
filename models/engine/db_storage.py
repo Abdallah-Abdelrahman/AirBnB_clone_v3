@@ -87,8 +87,8 @@ class DBStorage:
             id: id
         """
         instance = None
-        if cls is not None and isinstance(cls, BaseModel):
-            instance = self.__session.query(cls).filter(cls.id == id).first()
+        if cls and cls in classes.values():
+            instance = self.__session.query(cls).get(id)
         return instance
 
     def count(self, cls=None):
