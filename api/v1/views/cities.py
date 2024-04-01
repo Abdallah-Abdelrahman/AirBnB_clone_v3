@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-"""Cities endpoint"""
+"""City actions"""
 
-from flask import abort, jsonify, make_response, request
+from flask import abort, jsonify, request
 
 from api.v1.views import app_views
 from models import storage
@@ -21,7 +21,7 @@ def get_cities(state_id):
 
 @app_views.route("/cities/<string:city_id>", methods=["GET"])
 def get_city(city_id):
-    """Get a specific city by its ID"""
+    """Get a city by its id"""
     city = storage.get(City, city_id)
     if city is None:
         abort(404)
@@ -40,9 +40,9 @@ def delete_city(city_id):
 
 
 @app_views.route("/states/<string:state_id>/cities", methods=["POST"])
-def create_city(state_id):
+def add_city(state_id):
     """Create a new city"""
-    if request.content_type != 'application/json':
+    if request.content_type != 'application/json' or not request.is_json:
         abort(400, 'Not a JSON')
     state = storage.get(State, state_id)
     if state is None:
@@ -55,13 +55,13 @@ def create_city(state_id):
     data["state_id"] = state_id
     city = City(**data)
     city.save()
-    return make_response(jsonify(city.to_dict()), 201)
+    return jsonify(city.to_dict()), 201
 
 
 @app_views.route("/cities/<string:city_id>", methods=["PUT"])
 def update_city(city_id):
-    """Update a specific city by its ID"""
-    if request.content_type != 'application/json':
+    """Update city by its id"""
+    if request.content_type != 'application/json' or not request.is_json:
         abort(400, 'Not a JSON')
     city = storage.get(City, city_id)
     if city is None:

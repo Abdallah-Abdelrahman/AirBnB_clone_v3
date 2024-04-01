@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-"""States endpoint"""
+"""State actions"""
 
-from flask import abort, jsonify, make_response, request
+from flask import abort, jsonify, request
 
 from api.v1.views import app_views
 from models import storage
@@ -47,7 +47,7 @@ def create_state():
         abort(400, "Missing name")
     state = State(**data)
     state.save()
-    return make_response(jsonify(state.to_dict()), 201)
+    return jsonify(state.to_dict()), 201
 
 
 @app_views.route("/states/<string:state_id>", methods=["PUT"])

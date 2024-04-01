@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Users Endpoints """
+""" User actions"""
 
 from flask import abort, jsonify, make_response, request
 

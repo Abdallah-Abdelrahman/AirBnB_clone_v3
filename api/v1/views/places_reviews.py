@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-"""Place_Reviews Endpoints"""
+"""Review actions"""
 
-from flask import abort, jsonify, make_response, request
+from flask import abort, jsonify, request
 
 from api.v1.views import app_views
 from models import storage

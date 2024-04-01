@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Place_Amenities Endpoints"""
+"""places_amenities actions"""
 
 from os import environ
 

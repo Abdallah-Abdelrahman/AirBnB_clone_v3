@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Places endpoint"""
+"""Place actions"""
 
 from flask import abort, jsonify, make_response, request
 from api.v1.views import app_views
