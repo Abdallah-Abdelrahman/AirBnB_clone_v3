@@ -42,6 +42,8 @@ def stats():
     '''Route to retrieves the number of each objects by type.
 
     Returns:
-        json of all instances count'''
+        json of all instances count
+    '''
+    instances_stats = {k: storage.count(v) for k, v in STATS.items()}
 
-    return jsonify({k: storage.count(v) for k, v in STATS.items()})
+    return jsonify(instances_stats)
