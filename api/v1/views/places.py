@@ -99,6 +99,7 @@ def search_places():
     cities = data.get('cities', [])
     amenities = data.get('amenities', [])
     existing_places = {}
+    is_fake = True
 
     city_ids = set()
     resp = []
@@ -107,6 +108,7 @@ def search_places():
         for state_id in states:
             state = storage.get(State, state_id)
             for city in state.cities if state else []:
+                is_fake = False
                 city_ids.add(city.id)
 
     if cities:
@@ -115,6 +117,7 @@ def search_places():
     for id_ in city_ids:
         city = storage.get(City, id_)
         for place in city.places if city else []:
+            is_fake = False
             if amenities:
                 place_dict = place.to_dict()
                 for amnt in place.amenities:
@@ -126,7 +129,7 @@ def search_places():
                 resp.append(place.to_dict())
                 existing_places[place.id] = True
 
-    if len(city_ids) == 0:
+    if len(city_ids) == 0 or is_fake:
         places = storage.all(Place).values()
         if amenities:
             for place in places:
