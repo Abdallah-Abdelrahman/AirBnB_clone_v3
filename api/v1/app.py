@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Create a new Flask app"""
-from os import environ
+from os import getenv
 
 from flask import Flask, jsonify, make_response
 from flask_cors import CORS
@@ -31,11 +31,6 @@ def not_found(error):
 
 
 if __name__ == "__main__":
-    host = environ.get("HBNB_API_HOST")
-    port = environ.get("HBNB_API_PORT")
-    if not host:
-        host = "0.0.0.0"
-
-    if not port:
-        port = "5000"
+    host = getenv("HBNB_API_HOST", "0.0.0.0")
+    port = getenv("HBNB_API_PORT", 5000)
     app.run(host=host, port=port, threaded=True)
