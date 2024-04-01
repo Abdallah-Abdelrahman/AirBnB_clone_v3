@@ -1,10 +1,5 @@
 #!/usr/bin/python3
-"""app view blueprint
-
-Attrs:
-    app_views: instance of Blueprint
-"""
-
+"""init intialisation file for views module"""
 from flask import Blueprint
 
 app_views = Blueprint("app_views", __name__, url_prefix="/api/v1")
