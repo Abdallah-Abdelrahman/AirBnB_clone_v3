@@ -39,6 +39,7 @@ class DBStorage:
                                              HBNB_MYSQL_DB))
         if HBNB_ENV == "test":
             Base.metadata.drop_all(self.__engine)
+        self.is_closed = False
 
     def all(self, cls=None):
         """query on the current database session"""
@@ -73,8 +74,10 @@ class DBStorage:
 
     def close(self):
         """Close SQLAlqechmy session"""
+        self.__session.rollback()
         self.__session.close()
         self.__session.remove()
+        self.is_closed = True
 
     def get(self, cls, id):
         """Get instance by id

@@ -79,9 +79,8 @@ class TestDBStorage(unittest.TestCase):
         """Set up for the tests"""
         cls.state = State(name="San Fransico")
         cls.city = City(name="Mexico", state_id=cls.state.id)
-        storage.new(cls.state)
-        storage.new(cls.city)
-        storage.save()
+        cls.state.save()
+        cls.city.save()
 
     @classmethod
     def tearDownClass(cls):
@@ -96,21 +95,15 @@ class TestDBStorage(unittest.TestCase):
         self.state = storage._DBStorage__session.merge(self.state)
         self.city = storage._DBStorage__session.merge(self.city)
 
-    """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
         self.assertIs(type(models.storage.all()), dict)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_new(self):
         """test that new adds an object to the database"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
 
