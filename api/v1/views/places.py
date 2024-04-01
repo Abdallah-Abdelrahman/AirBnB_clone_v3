@@ -93,8 +93,8 @@ def search_places():
         abort(400, "Not a JSON")
 
     data = request.get_json()
-    if data is None:
-        abort(400, "Not a JSON")
+    # if data is None:
+    #     abort(400, "Not a JSON")
     states = data.get('states', [])
     cities = data.get('cities', [])
     amenities = data.get('amenities', [])
