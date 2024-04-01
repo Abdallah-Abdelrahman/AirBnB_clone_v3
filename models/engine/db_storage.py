@@ -81,11 +81,11 @@ class DBStorage:
         self.is_closed = True
 
     def get(self, cls, id):
-        """Get One Object"""
-        obj = None
-        if cls is not None and issubclass(cls, BaseModel):
-            obj = self.__session.query(cls).filter(cls.id == id).first()
-        return obj
+        """Get instance by id"""
+        if not cls or cls.__name__ not in classes:
+            return None
+        id_ = '{}.{}'.format(cls.__name__, id)
+        return self.all(cls).get(id_)
 
     def count(self, cls=None):
         """Returns the number of objects in storage matching the given class"""
