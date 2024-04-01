@@ -106,7 +106,7 @@ def search_places():
         for state_id in states:
             state = storage.get(State, state_id)
             for city in state.cities if state else []:
-                city_ids.update(city.id)
+                city_ids.add(city.id)
 
     if cities:
         city_ids.update(cities)
@@ -117,8 +117,13 @@ def search_places():
             if amenities:
                 for amnt in place.amenities:
                     if amnt.id in amenities:
-                        resp.append(place)
+                        resp.append(place.to_dict())
+                        amenities.remove(amnt.id)
             else:
-                resp.append(place)
+                resp.append(place.to_dict())
+
+    if len(city_ids) == 0:
+        places = storage.all(Place)
+        resp = [p.to_dict() for p in places.values()]
 
     return jsonify(resp), 200
