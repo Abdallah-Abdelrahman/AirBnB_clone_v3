@@ -98,9 +98,8 @@ def search_places():
     states = data.get('states', [])
     cities = data.get('cities', [])
     amenities = data.get('amenities', [])
-    existing_places = {}
 
-    city_ids = set()
+    city_ids = {}
     resp = []
 
     if states:
@@ -108,10 +107,10 @@ def search_places():
             state = storage.get(State, state_id)
             if state:
                 for city in state.cities:
-                    city_ids.add(city.id)
+                    city_ids[city.id] = True
 
     if cities:
-        city_ids.update(cities)
+        city_ids.update({i: True for i in cities})
 
     for id_ in city_ids:
         city = storage.get(City, id_)
@@ -122,14 +121,8 @@ def search_places():
                     for amnt in place.amenities:
                         if amnt.id in amenities:
                             resp.append(place_dict)
-                            '''
-                            if existing_places.get(place.id) is None:
-                                resp.append(place_dict)
-                                existing_places[place.id] = True
-                            '''
                 else:
                     resp.append(place.to_dict())
-                    # existing_places[place.id] = True
 
     if len(city_ids) == 0:
         places = storage.all(Place).values()
@@ -139,11 +132,6 @@ def search_places():
                 for amnt in place.amenities:
                     if amnt.id in amenities:
                         resp.append(place_dict)
-                        '''
-                        if existing_places.get(place.id) is None:
-                            resp.append(place_dict)
-                            existing_places[place.id] = True
-                        '''
         else:
             resp = [p.to_dict() for p in places]
 
