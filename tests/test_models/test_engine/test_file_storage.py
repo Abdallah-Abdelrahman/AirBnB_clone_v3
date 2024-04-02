@@ -3,7 +3,6 @@
 Contains the TestFileStorageDocs classes
 """
 
-from datetime import datetime
 import inspect
 import models
 from models.engine import file_storage
@@ -16,7 +15,6 @@ from models.state import State
 from models.user import User
 from models import storage
 import json
-import os
 import pep8
 import unittest
 FileStorage = file_storage.FileStorage

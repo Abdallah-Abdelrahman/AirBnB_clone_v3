@@ -80,8 +80,6 @@ class TestDBStorage(unittest.TestCase):
         cls.city = City(name="Mexico", state_id=cls.state.id)
         cls.state.save()
         cls.city.save()
-        cls.state_count = storage.count(State)
-        cls.city_count = storage.count(City)
 
     @classmethod
     def tearDownClass(cls):
@@ -117,8 +115,8 @@ class TestDBStorage(unittest.TestCase):
         """Test the count method"""
         state_count = storage.count(State)
         city_count = storage.count(City)
-        self.assertEqual(state_count, self.state_count)
-        self.assertEqual(city_count, self.city_count)
+        self.assertEqual(state_count, 1)
+        self.assertEqual(city_count, 1)
 
     def test_all_with_class(self):
         """Test the all method with class name argument"""
