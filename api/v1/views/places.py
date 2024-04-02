@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Place actions"""
 
-from flask import abort, jsonify, make_response, request
+from flask import abort, jsonify, request
 from api.v1.views import app_views
 from models import storage
 from models.state import State
@@ -62,7 +62,7 @@ def create_place(city_id):
     data["city_id"] = city_id
     place = Place(**data)
     place.save()
-    return make_response(jsonify(place.to_dict()), 201)
+    return (jsonify(place.to_dict()), 201)
 
 
 @app_views.route("/places/<string:place_id>", methods=["PUT"])
@@ -93,8 +93,8 @@ def search_places():
         abort(400, "Not a JSON")
 
     data = request.get_json()
-    # if data is None:
-    #     abort(400, "Not a JSON")
+    if data is None:
+        abort(400, "Not a JSON")
     states = data.get('states', [])
     cities = data.get('cities', [])
     amenities = data.get('amenities', [])
@@ -121,12 +121,15 @@ def search_places():
                     place_dict = place.to_dict()
                     for amnt in place.amenities:
                         if amnt.id in amenities:
+                            resp.append(place_dict)
+                            '''
                             if existing_places.get(place.id) is None:
                                 resp.append(place_dict)
                                 existing_places[place.id] = True
-                elif existing_places.get(place.id) is None:
+                            '''
+                else:
                     resp.append(place.to_dict())
-                    existing_places[place.id] = True
+                    # existing_places[place.id] = True
 
     if len(city_ids) == 0:
         places = storage.all(Place).values()
@@ -135,9 +138,12 @@ def search_places():
                 place_dict = place.to_dict()
                 for amnt in place.amenities:
                     if amnt.id in amenities:
+                        resp.append(place_dict)
+                        '''
                         if existing_places.get(place.id) is None:
                             resp.append(place_dict)
                             existing_places[place.id] = True
+                        '''
         else:
             resp = [p.to_dict() for p in places]
 
