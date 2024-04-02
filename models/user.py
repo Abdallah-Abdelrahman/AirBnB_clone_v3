@@ -23,8 +23,13 @@ class User(BaseModel, Base):
         first_name = ""
         last_name = ""
 
-    def __init__(self, *args, **kwargs):
-        """initializes user"""
-        super().__init__(*args, **kwargs)
-        if "password" in kwargs:
-            self.password = md5(kwargs['password'].encode()).hexdigest()
+    def __setattr__(self, name, value):
+        '''overload setattr
+        Args:
+            name: the key
+            value: key's value
+        '''
+        if name == 'password':
+            value = md5(value.encode()).hexdigest()
+
+        return super().__setattr__(name, value)
