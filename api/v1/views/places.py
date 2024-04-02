@@ -93,8 +93,8 @@ def search_places():
         abort(400, "Not a JSON")
 
     data = request.get_json()
-    # if data is None:
-    #     abort(400, "Not a JSON")
+    if data is None:
+        abort(400, "Not a JSON")
     states = data.get('states', [])
     cities = data.get('cities', [])
     amenities = data.get('amenities', [])
@@ -121,7 +121,7 @@ def search_places():
             if amenities:
                 place_dict = place.to_dict()
                 for amnt in place.amenities:
-                    if amnt.id in amenities:
+                    if amnt in amenities:
                         if existing_places.get(place.id) is None:
                             resp.append(place_dict)
                             existing_places[place.id] = True
@@ -135,7 +135,7 @@ def search_places():
             for place in places:
                 place_dict = place.to_dict()
                 for amnt in place.amenities:
-                    if amnt.id in amenities:
+                    if amnt in amenities:
                         if existing_places.get(place.id) is None:
                             resp.append(place_dict)
                             existing_places[place.id] = True
