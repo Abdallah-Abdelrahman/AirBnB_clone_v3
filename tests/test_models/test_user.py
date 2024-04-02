@@ -3,14 +3,12 @@
 Contains the TestUserDocs classes
 """
 
-from datetime import datetime
 import inspect
 import models
 from models import user
 from models.base_model import BaseModel
 import pep8
 import unittest
-User = user.User
 
 
 class TestUserDocs(unittest.TestCase):
@@ -18,7 +16,8 @@ class TestUserDocs(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up for the doc tests"""
-        cls.user_f = inspect.getmembers(User, inspect.isfunction)
+        cls.User = user.User
+        cls.user_f = inspect.getmembers(cls.User, inspect.isfunction)
 
     def test_pep8_conformance_user(self):
         """Test that models/user.py conforms to PEP8."""
@@ -43,9 +42,9 @@ class TestUserDocs(unittest.TestCase):
 
     def test_user_class_docstring(self):
         """Test for the City class docstring"""
-        self.assertIsNot(User.__doc__, None,
+        self.assertIsNot(self.User.__doc__, None,
                          "User class needs a docstring")
-        self.assertTrue(len(User.__doc__) >= 1,
+        self.assertTrue(len(self.User.__doc__) >= 1,
                         "User class needs a docstring")
 
     def test_user_func_docstrings(self):
@@ -59,9 +58,14 @@ class TestUserDocs(unittest.TestCase):
 
 class TestUser(unittest.TestCase):
     """Test the User class"""
+    @classmethod
+    def setUpClass(cls):
+        '''set up User'''
+        cls.User = user.User
+
     def test_is_subclass(self):
         """Test that User is a subclass of BaseModel"""
-        user = User()
+        user = self.User()
         self.assertIsInstance(user, BaseModel)
         self.assertTrue(hasattr(user, "id"))
         self.assertTrue(hasattr(user, "created_at"))
@@ -69,7 +73,7 @@ class TestUser(unittest.TestCase):
 
     def test_email_attr(self):
         """Test that User has attr email, and it's an empty string"""
-        user = User()
+        user = self.User()
         self.assertTrue(hasattr(user, "email"))
         if models.storage_t == 'db':
             self.assertEqual(user.email, None)
@@ -78,7 +82,7 @@ class TestUser(unittest.TestCase):
 
     def test_password_attr(self):
         """Test that User has attr password, and it's an empty string"""
-        user = User()
+        user = self.User()
         self.assertTrue(hasattr(user, "password"))
         if models.storage_t == 'db':
             self.assertEqual(user.password, None)
@@ -87,7 +91,7 @@ class TestUser(unittest.TestCase):
 
     def test_first_name_attr(self):
         """Test that User has attr first_name, and it's an empty string"""
-        user = User()
+        user = self.User()
         self.assertTrue(hasattr(user, "first_name"))
         if models.storage_t == 'db':
             self.assertEqual(user.first_name, None)
@@ -96,7 +100,7 @@ class TestUser(unittest.TestCase):
 
     def test_last_name_attr(self):
         """Test that User has attr last_name, and it's an empty string"""
-        user = User()
+        user = self.User()
         self.assertTrue(hasattr(user, "last_name"))
         if models.storage_t == 'db':
             self.assertEqual(user.last_name, None)
@@ -105,7 +109,7 @@ class TestUser(unittest.TestCase):
 
     def test_to_dict_creates_dict(self):
         """test to_dict method creates a dictionary with proper attrs"""
-        u = User()
+        u = self.User()
         new_d = u.to_dict()
         self.assertEqual(type(new_d), dict)
         self.assertFalse("_sa_instance_state" in new_d)
@@ -117,7 +121,7 @@ class TestUser(unittest.TestCase):
     def test_to_dict_values(self):
         """test that values in dict returned from to_dict are correct"""
         t_format = "%Y-%m-%dT%H:%M:%S.%f"
-        u = User()
+        u = self.User()
         new_d = u.to_dict()
         self.assertEqual(new_d["__class__"], "User")
         self.assertEqual(type(new_d["created_at"]), str)
@@ -127,6 +131,13 @@ class TestUser(unittest.TestCase):
 
     def test_str(self):
         """test that the str method has the correct output"""
-        user = User()
+        user = self.User()
         string = "[User] ({}) {}".format(user.id, user.__dict__)
         self.assertEqual(string, str(user))
+
+    @unittest.skipIf(not models.db, 'only db')
+    def test_user_psw(self):
+        '''test user psw doesn't exits '''
+        u = self.User()
+        u_dict = u.to_dict()
+        self.assertIsNone(u_dict.get('password'))

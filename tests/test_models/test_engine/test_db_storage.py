@@ -3,10 +3,8 @@
 Contains the TestDBStorageDocs and TestDBStorage classes
 """
 
-from datetime import datetime
 import inspect
 import models
-import sqlalchemy
 from models.engine import db_storage
 from models.amenity import Amenity
 from models.base_model import BaseModel, Base
@@ -15,11 +13,10 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
-import json
-import os
 import pep8
 import unittest
 from models import storage
+
 DBStorage = db_storage.DBStorage
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
            "Review": Review, "State": State, "User": User}
@@ -70,17 +67,21 @@ test_db_storage.py'])
                             "{:s} method needs a docstring".format(func[0]))
 
 
-@unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+@unittest.skipIf(not models.db, "not testing db storage")
 class TestDBStorage(unittest.TestCase):
     """Test the DBStorage class"""
 
     @classmethod
     def setUpClass(cls):
         """Set up for the tests"""
+        Base.metadata.drop_all(storage._DBStorage__engine)
+        storage.reload()
         cls.state = State(name="San Fransico")
         cls.city = City(name="Mexico", state_id=cls.state.id)
         cls.state.save()
         cls.city.save()
+        cls.state_count = storage.count(State)
+        cls.city_count = storage.count(City)
 
     @classmethod
     def tearDownClass(cls):
@@ -114,8 +115,10 @@ class TestDBStorage(unittest.TestCase):
 
     def test_count(self):
         """Test the count method"""
-        self.assertEqual(storage.count(State), 1)
-        self.assertEqual(storage.count(City), 1)
+        state_count = storage.count(State)
+        city_count = storage.count(City)
+        self.assertEqual(state_count, self.state_count)
+        self.assertEqual(city_count, self.city_count)
 
     def test_all_with_class(self):
         """Test the all method with class name argument"""

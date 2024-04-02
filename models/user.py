@@ -27,4 +27,4 @@ class User(BaseModel, Base):
         """initializes user"""
         super().__init__(*args, **kwargs)
         if "password" in kwargs:
-            self.password = md5(self.password.encode()).hexdigest()
+            self.password = md5(kwargs['password'].encode()).hexdigest()
